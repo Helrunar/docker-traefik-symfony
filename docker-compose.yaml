@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+
+  symfony:
+    image: local:server
+    build: ./Docker
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.symfony.entrypoints=web"
+      - "traefik.http.routers.symfony.rule=Host(`symfony.local`)"
+      - "traefik.http.routers.symfony.service=symfony"
+      - "traefik.http.services.symfony.loadbalancer.server.port=80"
+      - "traefik.docker.network=traefik"
+    volumes:
+      - './symfony:/var/www/html'
+    networks:
+      - traefik
+      - database
+
+networks:
+  traefik:
+    external: true
+  database:
+    external: true
